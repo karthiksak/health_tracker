@@ -36,7 +36,7 @@ export default function PatientReport({ user }) {
         
         // Find diet score
         const ds = dietScores.find(s => s.date === dateStr);
-        const dsScore = ds ? (ds.totalScore / 9) * 100 : 0; // Normalized to 100%
+        const dsScore = ds ? Math.max(0, (ds.totalScore / 9) * 100) : 0; // Normalized to 100%, min 0
 
         // Find log
         const log = logs.find(l => l.date === dateStr);

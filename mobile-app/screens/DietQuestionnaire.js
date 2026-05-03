@@ -60,13 +60,13 @@ const QUESTIONS = [
         calcScore: (selected) => {
             if (selected.length === 0) return 0;
             if (selected.length === 1) return 1;
-            return 2; // 2-3 servings or more
+            return 2; // 2–3 servings or more
         }
     },
     {
         id: 'junk',
-        title: 'Junk Food / Sugar',
-        subtitle: 'Did you consume any fried snacks, bakery items, or soft drinks?',
+        title: 'Junk Food / Sugar Intake',
+        subtitle: 'Did you consume any junk food? (e.g. Fried snacks, bakery items, soft drinks, packaged foods)',
         type: 'single',
         options: [
             { label: 'Yes', score: -1 },
@@ -96,8 +96,8 @@ const QUESTIONS = [
     },
     {
         id: 'hunger',
-        title: 'Hunger Cues',
-        subtitle: 'Did you feel hunger before eating your meals?',
+        title: 'Hunger Before Meals',
+        subtitle: 'Did you feel hunger before eating? (Clinical Indicator)',
         type: 'single',
         options: [
             { label: 'Yes', score: 0 },
