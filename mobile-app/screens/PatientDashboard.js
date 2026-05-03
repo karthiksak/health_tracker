@@ -180,6 +180,23 @@ export default function PatientDashboard({ user, setUser }) {
                     </TouchableOpacity>
                 </View>
 
+                {/* Diet Questionnaire Callout */}
+                <TouchableOpacity 
+                    style={styles.dietCheckCard} 
+                    onPress={() => navigation.navigate('DietCheck')}
+                >
+                    <View style={styles.dietCheckInfo}>
+                        <View style={styles.dietCheckIcon}>
+                            <Ionicons name="medal" size={24} color="#f59e0b" />
+                        </View>
+                        <View>
+                            <Text style={styles.dietCheckTitle}>Daily Diet Quality</Text>
+                            <Text style={styles.dietCheckSub}>Assess your habits for today</Text>
+                        </View>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.3)" />
+                </TouchableOpacity>
+
                 <Text style={styles.sectionTitleMain}>Log Intake</Text>
                 <View style={styles.logCard}>
                     {['Breakfast', 'Lunch', 'Dinner'].map((mealTime, idx) => (
@@ -272,5 +289,20 @@ const styles = StyleSheet.create({
     inputIcon: { marginRight: 12 },
     input: { flex: 1, paddingVertical: 14, color: '#f8fafc', fontSize: 16, outlineStyle: 'none' },
     primaryBtn: { flexDirection: 'row', backgroundColor: '#8b5cf6', padding: 16, borderRadius: 16, alignItems: 'center', justifyContent: 'center', gap: 8, shadowColor: '#8b5cf6', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10 },
-    primaryBtnText: { color: '#fff', fontSize: 16, fontWeight: 'bold', letterSpacing: 0.5 }
+    primaryBtnText: { color: '#fff', fontSize: 16, fontWeight: 'bold', letterSpacing: 0.5 },
+    dietCheckCard: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        backgroundColor: 'rgba(245, 158, 11, 0.1)', 
+        padding: 16, 
+        borderRadius: 20, 
+        borderWidth: 1, 
+        borderColor: 'rgba(245, 158, 11, 0.3)', 
+        marginBottom: 24 
+    },
+    dietCheckInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    dietCheckIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(245, 158, 11, 0.2)', justifyContent: 'center', alignItems: 'center' },
+    dietCheckTitle: { color: '#f8fafc', fontWeight: 'bold', fontSize: 16 },
+    dietCheckSub: { color: '#f59e0b', fontSize: 12, marginTop: 2 }
 });

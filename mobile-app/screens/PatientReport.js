@@ -2,10 +2,11 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, ScrollView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useFocusEffect } from '@react-navigation/native';
-import { getPatientLogs, getTarget } from '../utils/store';
+import { getPatientLogs, getTarget, getDietScores } from '../utils/store';
 
 export default function PatientReport({ user }) {
     const [logs, setLogs] = useState([]);
+    const [dietScores, setDietScores] = useState([]);
     const [target, setTarget] = useState({ targetP: 100, targetC: 150, targetF: 25, targetExercise: 30 });
 
     useFocusEffect(
@@ -13,6 +14,8 @@ export default function PatientReport({ user }) {
             const load = async () => {
                 const l = await getPatientLogs(user.id);
                 setLogs(l);
+                const ds = await getDietScores(user.id);
+                setDietScores(ds);
                 const t = await getTarget(user.id);
                 setTarget(t);
             };
@@ -31,15 +34,19 @@ export default function PatientReport({ user }) {
         const dateStr = d.toISOString().split('T')[0];
         last7Days.push(d.toLocaleDateString('en-US', {weekday: 'short'}));
         
+        // Find diet score
+        const ds = dietScores.find(s => s.date === dateStr);
+        const dsScore = ds ? (ds.totalScore / 9) * 100 : 0; // Normalized to 100%
+
         // Find log
         const log = logs.find(l => l.date === dateStr);
         if(log) {
             const pPct = Math.min(100, (log.macros.protein / (target.targetP || 1)) * 100) || 0;
             const ePct = Math.min(100, (log.exerciseMinutes / (target.targetExercise || 1)) * 100) || 0;
-            chartData.push((pPct + ePct) / 2);
+            chartData.push((pPct + ePct + dsScore) / (ds ? 3 : 2));
             weekAvgP += log.macros.protein;
         } else {
-            chartData.push(0);
+            chartData.push(dsScore > 0 ? dsScore : 0);
         }
     }
 
@@ -113,6 +120,21 @@ export default function PatientReport({ user }) {
                     </Text>
                 </View>
 
+                {/* Recent Diet Scores */}
+                <Text style={styles.sectionTitle}>Diet Quality History</Text>
+                {dietScores.slice(-3).reverse().map((ds, idx) => (
+                    <View key={idx} style={styles.scoreRow}>
+                        <View>
+                            <Text style={styles.scoreDate}>{new Date(ds.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}</Text>
+                            <Text style={styles.scoreCarb}>{ds.answers?.carbs?.label}</Text>
+                        </View>
+                        <View style={styles.scoreBadge}>
+                            <Text style={styles.scoreVal}>{ds.totalScore}/9</Text>
+                        </View>
+                    </View>
+                ))}
+                <View style={{height: 100}} />
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -132,5 +154,11 @@ const styles = StyleSheet.create({
     chartTitle: { color: '#f8fafc', fontWeight: '600', fontSize: 16, marginBottom: 16, alignSelf: 'flex-start' },
     feedbackCard: { backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: 20, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.3)' },
     feedbackTitle: { fontSize: 18, fontWeight: 'bold', color: '#10b981', marginBottom: 8 },
-    feedbackDesc: { color: '#a1a1aa', lineHeight: 22 }
+    feedbackDesc: { color: '#a1a1aa', lineHeight: 22 },
+    sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#f8fafc', marginTop: 32, marginBottom: 16 },
+    scoreRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', padding: 16, borderRadius: 16, marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+    scoreDate: { color: '#f8fafc', fontWeight: 'bold', fontSize: 15 },
+    scoreCarb: { color: '#a1a1aa', fontSize: 12, marginTop: 4 },
+    scoreBadge: { backgroundColor: 'rgba(14, 165, 233, 0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+    scoreVal: { color: '#0ea5e9', fontWeight: '900', fontSize: 16 }
 });

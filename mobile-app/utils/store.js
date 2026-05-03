@@ -59,6 +59,9 @@ export const initStore = async () => {
     
     const targets = await store.get('targets');
     if (!targets) await store.set('targets', []); 
+
+    const dietScores = await store.get('diet_scores');
+    if (!dietScores) await store.set('diet_scores', []);
     
     const currentUser = await store.get('currentUser');
     if (!currentUser) await store.set('currentUser', null);
@@ -131,6 +134,30 @@ export const addLog = async (patientId, date, foodIds, exerciseMinutes, waterCup
 export const getPatientLogs = async (patientId) => {
     let logs = await store.get('logs') || [];
     return logs.filter(l => l.patientId === patientId);
+};
+
+export const saveDietScore = async (patientId, date, scoreData) => {
+    let scores = await store.get('diet_scores') || [];
+    let existingIndex = scores.findIndex(s => s.patientId === patientId && s.date === date);
+    
+    const entry = {
+        patientId,
+        date,
+        ...scoreData,
+        timestamp: Date.now()
+    };
+
+    if (existingIndex >= 0) {
+        scores[existingIndex] = entry;
+    } else {
+        scores.push(entry);
+    }
+    await store.set('diet_scores', scores);
+};
+
+export const getDietScores = async (patientId) => {
+    let scores = await store.get('diet_scores') || [];
+    return scores.filter(s => s.patientId === patientId);
 };
 
 export const getStreak = async (patientId) => {

@@ -11,6 +11,7 @@ import LoginScreen from './screens/LoginScreen';
 import PatientDashboard from './screens/PatientDashboard';
 import PatientReport from './screens/PatientReport';
 import DoctorDashboard from './screens/DoctorDashboard';
+import DietQuestionnaire from './screens/DietQuestionnaire';
 
 // Store
 import { initStore, getCurrentUser } from './utils/store';
@@ -45,6 +46,7 @@ function PatientTabs({ user, setUser }) {
         tabBarIcon: ({ focused, color }) => {
           let iconName;
           if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
+          else if (route.name === 'DietCheck') iconName = focused ? 'restaurant' : 'restaurant-outline';
           else if (route.name === 'Report') iconName = focused ? 'analytics' : 'analytics-outline';
 
           return (
@@ -60,6 +62,9 @@ function PatientTabs({ user, setUser }) {
     >
       <Tab.Screen name="Home">
         {props => <PatientDashboard {...props} user={user} setUser={setUser} />}
+      </Tab.Screen>
+      <Tab.Screen name="DietCheck">
+        {props => <DietQuestionnaire {...props} user={user} />}
       </Tab.Screen>
       <Tab.Screen name="Report">
         {props => <PatientReport {...props} user={user} />}
