@@ -1,0 +1,7 @@
+{
+  "name": "health-tracker-vercel-deploy",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd mobile-app && npm install && npx expo export -p web"
+  }
+}
