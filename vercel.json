@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "outputDirectory": "mobile-app/dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
