@@ -10,6 +10,7 @@ export default function DoctorDashboard({ user, setUser }) {
     const [expanded, setExpanded] = useState({});
     const [forms, setForms] = useState({});
     const [scores, setScores] = useState({});
+    const [patientLogs, setPatientLogs] = useState({});
 
     const loadData = async () => {
         const pts = await getPatients();
@@ -17,6 +18,7 @@ export default function DoctorDashboard({ user, setUser }) {
         
         let initForms = {};
         let calcScores = {};
+        let allLogs = {};
         for (let p of pts) {
             const t = await getTarget(p.id);
             initForms[p.id] = {
@@ -28,6 +30,7 @@ export default function DoctorDashboard({ user, setUser }) {
             
             // Adherence Scoring
             const logs = await getPatientLogs(p.id);
+            allLogs[p.id] = logs;
             let score = 0;
             if(logs.length > 0) {
                 let totalP = 0;
@@ -43,6 +46,7 @@ export default function DoctorDashboard({ user, setUser }) {
         }
         setForms(initForms);
         setScores(calcScores);
+        setPatientLogs(allLogs);
     };
 
     useFocusEffect(
@@ -167,6 +171,21 @@ export default function DoctorDashboard({ user, setUser }) {
                                         <Ionicons name="checkmark-circle" size={18} color="#fff" style={{marginRight: 8}} />
                                         <Text style={styles.saveBtnText}>Save Targets</Text>
                                     </TouchableOpacity>
+                                    
+                                    <View style={{marginTop: 24, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)', paddingTop: 16}}>
+                                        <Text style={styles.formTitle}>Recent Logs (Last 3 Days)</Text>
+                                        {patientLogs[p.id] && patientLogs[p.id].length > 0 ? (
+                                            patientLogs[p.id].slice(-3).reverse().map((l, i) => (
+                                                <View key={i} style={{marginBottom: 12, backgroundColor: 'rgba(255,255,255,0.02)', padding: 12, borderRadius: 12}}>
+                                                    <Text style={{color: '#f8fafc', fontWeight: 'bold', marginBottom: 4}}>{l.date}</Text>
+                                                    <Text style={{color: '#a1a1aa', fontSize: 13}}>P: {l.macros.protein}g | C: {l.macros.carb}g | F: {l.macros.fiber}g</Text>
+                                                    <Text style={{color: '#a1a1aa', fontSize: 13}}>Exercise: {l.exerciseMinutes}m | Water: {l.water} glasses</Text>
+                                                </View>
+                                            ))
+                                        ) : (
+                                            <Text style={{color: '#a1a1aa'}}>No recent logs found.</Text>
+                                        )}
+                                    </View>
                                 </View>
                             )}
                         </View>

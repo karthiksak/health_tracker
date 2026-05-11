@@ -47,7 +47,7 @@ const CircularProgress = ({ size, strokeWidth, progress, color, icon, label, val
     );
 };
 
-export default function PatientDashboard({ user, setUser }) {
+export default function PatientDashboard({ navigation, user, setUser }) {
     const [target, setTarget] = useState({ targetP: 100, targetC: 150, targetF: 25, targetExercise: 30 });
     const [foods, setFoods] = useState({ Breakfast: [], Lunch: [], Dinner: [] });
     const [selectedFoods, setSelectedFoods] = useState([]);
@@ -135,6 +135,9 @@ export default function PatientDashboard({ user, setUser }) {
                         <Ionicons name="flame" size={16} color="#fb923c" />
                         <Text style={styles.streakText}>{streak} Day Streak</Text>
                     </View>
+                    <TouchableOpacity style={styles.logoutBtn} onPress={async () => { await logout(); setUser(null); }}>
+                        <Ionicons name="log-out-outline" size={24} color="#ef4444" />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Progress Rings Card */}
@@ -264,6 +267,7 @@ const styles = StyleSheet.create({
     subtitle: { fontSize: 13, color: '#a1a1aa', marginTop: 2, letterSpacing: 0.5 },
     streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(251, 146, 60, 0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(251, 146, 60, 0.3)', gap: 6 },
     streakText: { color: '#fb923c', fontWeight: 'bold', fontSize: 12 },
+    logoutBtn: { padding: 8, backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.2)' },
     progressCard: { backgroundColor: 'rgba(24, 24, 27, 0.6)', padding: 20, borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginBottom: 16 },
     sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#f8fafc', marginBottom: 20 },
     ringsRow: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 8 },
